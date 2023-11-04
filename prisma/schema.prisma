@@ -31,6 +31,7 @@ model User {
   org       Org?    @relation(fields: [orgId], references: [id])
   orgId     Int?
   externalId String?
+  active    Boolean?
   @@unique([orgId, externalId])
 }
 

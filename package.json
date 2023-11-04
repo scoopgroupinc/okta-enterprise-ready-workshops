@@ -12,7 +12,10 @@
     "start": "nx run-many --target=serve --all",
     "init-db": "prisma generate && prisma db push && npx ts-node prisma/seed_script.ts",
     "serve-api": "nx run api:serve",
-    "oidc-migrate": "npx ts-node prisma/oidc_script.ts"
+    "oidc-migrate": "npx ts-node prisma/oidc_script.ts",
+    "prisma-migrate": "npx prisma migrate reset",
+    "prisma-start": "npx prisma studio",
+    "prisma-update": "prisma generate && prisma db push"
   },
   "private": true,
   "devDependencies": {
@@ -64,9 +67,12 @@
   "dependencies": {
     "@prisma/client": "^4.14.0",
     "@swc/helpers": "~0.5.0",
+    "body-parser": "^1.20.2",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
+    "morgan": "^1.10.0",
     "passport": "^0.6.0",
+    "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "passport-openidconnect": "^0.1.1",
     "react": "18.2.0",
