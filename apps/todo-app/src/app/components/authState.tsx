@@ -49,7 +49,7 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
         credentials: 'same-origin',
         mode: 'same-origin',
       });
-
+      console.log('res', res);
       if (res.status === 200) {
         const { name } = await res.json();
         setAuthState({ name, isAuthenticated: true });

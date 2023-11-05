@@ -12,40 +12,43 @@ import Modal from '../components/Modal';
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { authState } = useAuthState();
-  const [modalOpen, setModalOpen] = useState(false);
   const displayDate = moment().format('dddd, MMMM Do, YYYY');
   const date = moment().format('YYYYMMDD');
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const [isLoading, setLoading] = useState(true);
   const [user, setUser] = useState<User>();
   const [water, setWater] = useState<number>(0);
   const [mood, setMood] = useState<number>(0);
+  const [isChanged, setIsChanged] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getUserProfile = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch('/api/users/me', {
           credentials: 'same-origin',
           mode: 'same-origin',
         });
+        setIsLoading(false);
         const res = await response.json();
         console.log('user', res);
         setUser(res);
       } catch (error: unknown) {
+        setIsLoading(false);
+        console.log('error', error);
         console.error(error);
       }
     };
     if (authState.isAuthenticated) {
       console.log('getUserProfile');
       getUserProfile();
-    } else {
-      //   navigate('/');
     }
   }, [setUser]);
 
   useEffect(() => {
     const getDateData = async () => {
       try {
+        setIsLoading(true);
         const queryParams = new URLSearchParams({
           date,
           timezone,
@@ -54,7 +57,7 @@ export const Dashboard = () => {
           credentials: 'same-origin',
           mode: 'same-origin',
         });
-
+        setIsLoading(false);
         if (!response.ok) {
           console.error('response not ok', response);
         }
@@ -63,10 +66,9 @@ export const Dashboard = () => {
         console.log('getData', data);
         if (data.water) setWater(data.water);
         if (data.mood) setMood(data.mood);
-        // Process the data
       } catch (error) {
         console.error('Fetch error: ' + (error as Error).message);
-        // Handle the fetch error
+        setIsLoading(false);
       }
     };
 
@@ -77,15 +79,15 @@ export const Dashboard = () => {
   }, [user]);
 
   useEffect(() => {
-    const body = JSON.stringify({
-      date,
-      timezone,
-      userId: user?.id,
-      water,
-      mood,
-    });
-    console.log('body', body);
     const updateDateData = async () => {
+      const body = JSON.stringify({
+        date,
+        timezone,
+        userId: user?.id,
+        water,
+        mood,
+      });
+      console.log('body', body);
       try {
         if (user?.id) {
           const response = await fetch('/api/datedata/', {
@@ -104,24 +106,31 @@ export const Dashboard = () => {
       }
     };
 
-    if (user?.id) {
+    if (user?.id && isChanged) {
       console.log('updateDateData');
       updateDateData();
+      setIsChanged(false);
     }
-  }, [user, water, mood]);
+  }, [user, water, mood, isChanged]);
+
+  const onSetWater = (water: number) => {
+    setWater(water);
+    setIsChanged(true);
+  };
+
+  const onSetHappiness = (mood: number) => {
+    setMood(mood);
+    setIsChanged(true);
+  };
 
   return (
     <>
       <div className="bg-gradient"></div>
-      <Modal open={modalOpen} />
       <div
         className="flex flex-row min-h-screen"
         style={{ paddingBottom: 150 }}
       >
         <div className="max-w-screen-md mx-auto w-full">
-          <div className="flex justify-center mt-10">
-            <FacetsLogoWithText width={50} />
-          </div>
           <div
             className="flex justify-center mt-5 mb-5 rounded-full mx-auto"
             style={{ width: 100, height: 100, backgroundColor: '#333' }}
@@ -142,13 +151,16 @@ export const Dashboard = () => {
             <h4 className=" text-white">Hi {authState.name}!</h4>
             <div className="text-sm pb-[20px]">{displayDate}</div>
             <div className="flex flex-col items-center justify-center space-y-2">
+              {isLoading && (
+                <span className="loading loading-spinner loading-lg"></span>
+              )}
               <div className="flex">
                 <div className="pt-[15px] pr-1">Water: </div>
-                <Water cups={8} water={water} setWater={setWater} />
+                <Water cups={8} water={water} setWater={onSetWater} />
               </div>
               <div className="flex pt-3">
                 <div className="pt-[5px] pr-2">Happiness: </div>
-                <Mood mood={mood} setMood={setMood} />
+                <Mood mood={mood} setMood={onSetHappiness} />
               </div>
             </div>
           </div>
