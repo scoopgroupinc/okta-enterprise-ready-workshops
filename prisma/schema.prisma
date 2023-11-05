@@ -37,12 +37,14 @@ model User {
   @@unique([orgId, externalId])
 }
 
-model UserDay {
+model UserDateData {
   id       Int    @id @default(autoincrement())
-  date     DateTime
+  date     String
+  timezone String
   userId   Int
   water    Int
   mood     Int
+  @@unique([date, timezone, userId])
 }
 
 
