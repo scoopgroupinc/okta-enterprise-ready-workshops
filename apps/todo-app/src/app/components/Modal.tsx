@@ -10,9 +10,9 @@ export const Modal = ({ open }: { open: boolean }) => {
       open={open}
     >
       <div className="modal-box">
-        <h3 className="font-bold text-lg">Hello!</h3>
+        <h3 className="font-bold text-lg">Oops!</h3>
         <p className="py-4">
-          No longer authenticated. Please sign in again to continue.
+          You're no longer authenticated. Please sign in again.
         </p>
         <div className="modal-action">
           <form method="dialog">

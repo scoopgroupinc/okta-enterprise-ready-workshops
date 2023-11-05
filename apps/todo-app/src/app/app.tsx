@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './app.module.scss';
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Todo from './components/todolist';
 import { useAuthState } from './components/authState';
 import Home from './components/home';
@@ -12,18 +12,31 @@ import Values from './pages/activity/values';
 import Goals from './pages/activity/goals';
 import Journal from './pages/activity/journal';
 import Dashboard from './pages/dashboard';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Modal from './components/Modal';
 
 export const App = () => {
   const { userIsAuthenticatedFn, authState } = useAuthState();
+  const [modalOpen, setModalOpen] = useState(false);
+  const location = useLocation();
+  console.log('Current route:', location.pathname);
 
   useEffect(() => {
     userIsAuthenticatedFn();
   }, [userIsAuthenticatedFn]);
 
+  useEffect(() => {
+    if (!authState.isAuthenticated && location.pathname !== '/') {
+      setModalOpen(true);
+    } else {
+      setModalOpen(false);
+    }
+  }, [authState, location]);
+
   return (
     <div className="">
       <Toolbar />
+      <Modal open={modalOpen} />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
