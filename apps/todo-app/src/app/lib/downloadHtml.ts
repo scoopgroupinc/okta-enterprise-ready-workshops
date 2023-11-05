@@ -1,4 +1,4 @@
-export const downloadHtmlFile = (htmlString: string) => {
+export const downloadHtmlFile = (htmlString: string, type:string) => {
   // Step 1: Create a Blob from the HTML string
   const blob = new Blob([htmlString], { type: "text/html" });
 
@@ -14,7 +14,7 @@ export const downloadHtmlFile = (htmlString: string) => {
   // Step 3: Create a temporary anchor element and trigger the download
   const tempLink = document.createElement("a");
   tempLink.href = url;
-  tempLink.setAttribute("download", `${datetime}.html`); // Choose a filename here
+  tempLink.setAttribute("download", `${datetime}-${type}.html`); // Choose a filename here
   tempLink.click();
 
   // Clean up by revoking the Object URL

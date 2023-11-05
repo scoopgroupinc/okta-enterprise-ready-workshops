@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { useRef } from 'react';
 import TinyMCE from '../../components/TinyMCE';
 import { constructHtmlFile } from '../../lib/constructHtmlFile';
 import { downloadHtmlFile } from '../../lib/downloadHtml';
@@ -14,7 +14,7 @@ export const Values = () => {
   const download = () => {
     if (editorRef.current) {
       const htmlString = editorRef.current.getContent();
-      downloadHtmlFile(constructHtmlFile(htmlString));
+      downloadHtmlFile(constructHtmlFile(htmlString), 'values');
       // try {
       //   fetch("/api/save_html", {
       //     method: "POST",
@@ -48,7 +48,7 @@ export const Values = () => {
         <h4 className="text-white">
           Choose some of the following ways to help you indentify your goals
         </h4>
-        {/* <TinyMCE onInit={onInit} initialValue={initialValue} /> */}
+        <TinyMCE onInit={onInit} initialValue={initialValue} />
         <button className="btn mt-4 btn-secondary" onClick={download}>
           Download Journal as HTML
         </button>

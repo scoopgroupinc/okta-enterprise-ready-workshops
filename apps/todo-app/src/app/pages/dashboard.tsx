@@ -165,7 +165,7 @@ export const Dashboard = () => {
                 <h4 className="card-title">Identify Your Feelings</h4>
                 <p className="text-xs text-left">
                   Having strong emotions or no emotions at all? Get in touch
-                  with your feelings through this jounraling activity.
+                  with your feelings through this journaling activity.
                 </p>
               </div>
             </button>
