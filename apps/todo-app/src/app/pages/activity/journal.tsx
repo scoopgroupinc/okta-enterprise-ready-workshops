@@ -5,13 +5,14 @@ import { constructHtmlFile } from '../../lib/constructHtmlFile';
 import { downloadHtmlFile } from '../../lib/downloadHtml';
 
 export const Journal = () => {
+  const title = "Journal";
   const navigate = useNavigate();
   const editorRef = useRef(null);
 
   const download = () => {
     if (editorRef.current) {
       const htmlString = editorRef.current.getContent();
-      downloadHtmlFile(constructHtmlFile(htmlString), "journal");
+      downloadHtmlFile(constructHtmlFile(htmlString, title), "journal");
       // try {
       //   fetch("/api/save_html", {
       //     method: "POST",
@@ -37,7 +38,7 @@ export const Journal = () => {
         <div className="grid sm:grid-cols-2 gap-2 mt-[16px]">
           <div className="card w-full w-90 bg-base-100 shadow-xl">
             <div className="card-body">
-              <h2 className="card-title">Journal</h2>
+              <h2 className="card-title">{title}</h2>
               <p>
                 Journaling is a practice that people have been engaged in for
                 centuries, providing a range of mental, emotional, and even

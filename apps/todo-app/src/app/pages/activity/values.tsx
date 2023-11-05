@@ -14,7 +14,7 @@ export const Values = () => {
   const download = () => {
     if (editorRef.current) {
       const htmlString = editorRef.current.getContent();
-      downloadHtmlFile(constructHtmlFile(htmlString), 'values');
+      downloadHtmlFile(constructHtmlFile(htmlString, title), 'values');
       // try {
       //   fetch("/api/save_html", {
       //     method: "POST",
