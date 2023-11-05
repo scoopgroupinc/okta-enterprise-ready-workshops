@@ -1,9 +1,9 @@
-import moment from "moment";
-export const constructHtmlFile = (html: string, title:string) => {
+import moment from 'moment';
+export const constructHtmlFile = (html: string, title: string) => {
   const date = moment();
 
   // Format the date
-  const formattedDate = date.format("dddd, MMMM D, YYYY");
+  const formattedDate = date.format('dddd, MMMM D, YYYY');
 
   const htmlCode = `
   <!DOCTYPE html>
@@ -48,7 +48,8 @@ export const constructHtmlFile = (html: string, title:string) => {
       </style>
   </head>
   <body>
-      <h1>${title} ${formattedDate}</h1>
+      <h1>${title}</h1>
+      <p>${formattedDate}</p>
       ${html}
   </body>
   </html>

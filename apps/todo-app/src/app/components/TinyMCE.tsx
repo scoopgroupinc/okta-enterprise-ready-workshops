@@ -16,6 +16,7 @@ export default function TinyMCE({
       apiKey={tinymce_key}
       onInit={onInit}
       init={{
+        placeholder: 'Write your heart out here...',
         plugins:
           'insertdatetime tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste autocorrect a11ychecker typography inlinecss emoticons',
         toolbar:
@@ -68,7 +69,7 @@ export default function TinyMCE({
         //   );
         // },
       }}
-      initialValue={initialValue || 'Write something here...'}
+      initialValue={initialValue}
     />
   );
 }

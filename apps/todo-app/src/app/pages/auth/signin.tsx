@@ -58,7 +58,7 @@ export const Signin = () => {
         />
       </div>
 
-      <div id="password-field" className="mb-6">
+      <div id="password-field" className="mb-6 hidden">
         <label
           htmlFor="password"
           className="block text-sm font-medium leading-6 text-gray-900"
