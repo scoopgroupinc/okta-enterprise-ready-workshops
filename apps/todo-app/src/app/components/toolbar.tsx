@@ -26,12 +26,12 @@ export const Toolbar = () => {
       </button>
       {authState.isAuthenticated && (
         <div>
-          <span className="mr-6">Welcome, {authState.name}!</span>
-          <Link to={'/profile'} className="mr-6">
+          <span className="mr-6 text-white">Welcome, {authState.name}!</span>
+          <Link to={'/profile'} className="mr-6 text-white">
             Profile
           </Link>
           <button
-            className="py-1 px-2 hover:shadow-md hover:rounded-md hover:bg-slate-100"
+            className="py-1 px-2 hover:shadow-md hover:rounded-md hover:bg-slate-100 text-white"
             onClick={onRevokeAuth}
           >
             Sign out
