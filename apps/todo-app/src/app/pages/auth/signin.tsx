@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from '../../components/authState';
+import ROUTES from 'apps/todo-app/src/utils/routes';
 
 export const Signin = () => {
   const [username, setUsername] = useState<string>('');
@@ -32,7 +33,7 @@ export const Signin = () => {
       setUsername('');
       setPassword('');
 
-      navigate('/todo');
+      navigate(ROUTES.DASHBOARD);
     };
     signIn();
   };

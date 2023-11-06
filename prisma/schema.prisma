@@ -34,6 +34,8 @@ model User {
   orgId     Int?
   externalId String?
   active   Boolean?
+  comments ActivityComments[]
+  activitylikes ActivityLikes[]
   @@unique([orgId, externalId])
 }
 
@@ -47,6 +49,34 @@ model UserDateData {
   @@unique([date, timezone, userId])
 }
 
+model Activity {
+  id        Int    @id @default(autoincrement())
+  title     String
+  cardDesc  String
+  longDesc  String
+  tags      String
+  likes     ActivityLikes[]
+  comments  ActivityComments[]
+}
+
+model ActivityLikes {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  user User @relation(fields: [userId], references: [id])
+  activityId Int
+  activity Activity @relation(fields: [activityId], references: [id])
+  @@unique([userId, activityId])
+}
+
+model ActivityComments {
+  id       Int    @id @default(autoincrement())
+  comment String
+  userId   Int
+  user User @relation(fields: [userId], references: [id])
+  activityId Int
+  activity Activity @relation(fields: [activityId], references: [id])
+  @@unique([userId, activityId])
+}
 
 model Org {
   id        Int     @id @default(autoincrement())

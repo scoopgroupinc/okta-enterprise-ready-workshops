@@ -5,6 +5,7 @@ import passportOIDC from 'passport-openidconnect';
 import passport from 'passport';
 import session from 'express-session';
 import passportBearer from 'passport-http-bearer';
+import cors from 'cors';
 
 // body-parser is required to accept the header content-type application/scim+json from Okta
 // https://www.npmjs.com/package/body-parser
@@ -17,6 +18,7 @@ import morgan from 'morgan';
 // Import the scimRoute from the scim.ts file
 import { scimRoute } from './scim';
 import { dateData } from './dateData';
+import { openaiRoute } from './openai';
 
 interface IUser {
   id: number;
@@ -67,6 +69,18 @@ app.use(
     next();
   },
   dateData
+);
+
+app.use(
+  '/api/openai',
+  (req, res, next) => {
+    if (req.isUnauthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    next();
+  },
+  openaiRoute
 );
 
 passport.use(
@@ -211,6 +225,7 @@ app.use(morgan('combined'));
 // Okta recommended url - https://developer.okta.com/docs/guides/scim-provisioning-integration-prepare/main/#base-url
 app.use('/scim/v2', scimRoute);
 
+app.use(cors());
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/api`);

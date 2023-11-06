@@ -1,11 +1,16 @@
 import React, { useRef, useState } from 'react';
 import parse from 'html-react-parser';
+import { convert } from 'html-to-text';
 import { FEELINGS, SIMILAR_FEELINGS } from '../../lib/nonviolentcommunication';
 import TinyMCE from '../../components/TinyMCE';
 import { downloadHtmlFile } from '../../lib/downloadHtml';
 import { constructHtmlFile } from '../../lib/constructHtmlFile';
+import { useOpenAi } from '../../hooks/useOpenAi';
+import { useAuthState } from '../../components/authState';
 
 function Dashboard() {
+  const { authState } = useAuthState();
+  const { message, setMessage, chat, chats, isTyping } = useOpenAi();
   const title = 'Identify Your Feelings';
   const q1 = 'What happened?';
   const q2 = 'What would you do differently now?';
@@ -53,9 +58,13 @@ function Dashboard() {
   };
 
   const editorRef = useRef(null);
-  const download = () => {
+
+  const getFullJournal = () => {
+    let htmlString = '';
     if (editorRef.current) {
-      let htmlString = '';
+      if (selectedArray.length > 0) {
+        htmlString += `<p>Feelings:</p>`;
+      }
       selectedArray.forEach(({ feeling, selected, sad, emoji }) => {
         const className = `badge ${sad ? 'badge-neutral' : ''}`;
         if (selected) {
@@ -76,22 +85,26 @@ function Dashboard() {
           }
         }
       }
-
-      downloadHtmlFile(constructHtmlFile(htmlString, title), 'feelings');
-      // try {
-      //   fetch("/api/save_html", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({ data: constructHtmlFile(htmlString).toString() }), // send the HTML data as a JSON payload
-      //   })
-      //     .then((response) => response.json())
-      //     .then((data) => console.log(data));
-      // } catch (error) {
-      //   console.error("Error:", error);
-      // }
     }
+    return htmlString;
+  };
+  const download = () => {
+    const htmlString = getFullJournal();
+
+    downloadHtmlFile(constructHtmlFile(htmlString, title), 'feelings');
+    // try {
+    //   fetch("/api/save_html", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ data: constructHtmlFile(htmlString).toString() }), // send the HTML data as a JSON payload
+    //   })
+    //     .then((response) => response.json())
+    //     .then((data) => console.log(data));
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
   const next = () => {
     if (editorRef.current) {
@@ -103,7 +116,7 @@ function Dashboard() {
     }
   };
 
-  const submit = () => {
+  const submit = (e) => {
     if (editorRef.current) {
       if (editQuestion === EDIT_STATES.Q1) {
         const htmlString = editorRef.current.getContent();
@@ -118,6 +131,11 @@ function Dashboard() {
       }
       setEditQuestion(EDIT_STATES.DONE);
     }
+    const htmlString = getFullJournal();
+    const text = convert(htmlString);
+    const prompt = `Given what I have written please say something to help me grow and self reflect: ${text}`;
+    setMessage(prompt);
+    chat(e, prompt);
   };
 
   const back = () => {
@@ -329,6 +347,45 @@ function Dashboard() {
         <button className="btn mt-4 btn-secondary" onClick={download}>
           Download as HTML
         </button>
+
+        <section>
+          {chats && chats.length
+            ? chats.map((chat, index) => {
+                if (index > 0) {
+                  return (
+                    <div
+                      className={`chat ${
+                        chat.role === 'user' ? 'chat-start' : 'chat-end'
+                      }`}
+                    >
+                      <div>
+                        {authState && chat.role === 'user'
+                          ? authState.name
+                          : 'Coach'}
+                      </div>
+                      <div className="chat-bubble">{chat.content}</div>
+                    </div>
+                  );
+                }
+              })
+            : ''}
+        </section>
+
+        <div className={isTyping ? '' : 'hide'}>
+          <p>
+            <i>{isTyping ? 'Typing' : ''}</i>
+          </p>
+        </div>
+
+        <form action="" onSubmit={(e) => chat(e, message)}>
+          <input
+            type="text"
+            name="message"
+            value={message}
+            placeholder="Type a message here and hit Enter..."
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </form>
       </div>
       <footer className="footer p-10 bg-neutral text-neutral-content mt-[100px]">
         <nav>
