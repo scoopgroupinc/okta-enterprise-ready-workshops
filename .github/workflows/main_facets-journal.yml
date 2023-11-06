@@ -55,14 +55,14 @@ jobs:
           --build-arg DATABASE_URL="${{ env.DATABASE_URL }}" \
           --build-arg VITE_OPENAI_API_KEY="${{ env.VITE_OPENAI_API_KEY }}" \
           --build-arg VITE_TINY_MCE_KEY="${{ env.VITE_TINY_MCE_KEY }}" \
-          --build-arg DB_PORT="${{ env.DB_PORT }}" \
+          --build-arg PORT="${{ env.PORT }}" \
           docker push ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:${{ github.sha }}
 
           docker build -t ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:latest -f Dockerfile . \
           --build-arg DATABASE_URL="${{ env.DATABASE_URL }}" \
           --build-arg VITE_OPENAI_API_KEY="${{ env.VITE_OPENAI_API_KEY }}" \
           --build-arg VITE_TINY_MCE_KEY="${{ env.VITE_TINY_MCE_KEY }}" \
-          --build-arg DB_PORT="${{ env.DB_PORT }}" \
+          --build-arg PORT="${{ env.PORT }}" \
           docker push ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:latest
 
   deploy:
