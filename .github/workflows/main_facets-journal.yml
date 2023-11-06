@@ -17,7 +17,7 @@ env:
 
   NODE_VERSION: '18'
   REGISTRY_FOLDER: journal
-  PORT: 8080
+  PORT: 3000
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
   VITE_TINY_MCE_KEY: ${{ secrets.VITE_TINY_MCE_KEY }}

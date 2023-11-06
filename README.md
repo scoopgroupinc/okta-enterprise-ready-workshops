@@ -1,6 +1,6 @@
 # Okta Enterprise Ready Workshops
 
-This repository contains the base application for the OktaDev enterprise ready workshops. Take your SaaS apps to the next level in the identity maturity journey with these series of workshops. 
+This repository contains the base application for the OktaDev enterprise ready workshops. Take your SaaS apps to the next level in the identity maturity journey with these series of workshops.
 
 From the base application, you'll learn how to add the features you need to your SaaS app in order to land enterprise-level customers.
 
@@ -17,10 +17,10 @@ The Terraform workshop is independent. The OIDC workshop adds multi-tenancy requ
 
 **Table of Contents**
 
-* [About this application](#about-this-application)
-* [Getting started](#getting-started)
-* [Help](#help)
-* [License](#license)
+- [About this application](#about-this-application)
+- [Getting started](#getting-started)
+- [Help](#help)
+- [License](#license)
 
 ## About this application
 
@@ -30,10 +30,10 @@ Depending on the specific workshop you're participating in, you may need some kn
 
 **Prerequisites**
 
-* [Node](https://nodejs.org/en) v18
-* [npm](https://www.npmjs.com/) v9 (Installs automatically with Node and includes `npx`)
-* [Git](https://git-scm.com/)
-* [GitHub account](https://github.com/)
+- [Node](https://nodejs.org/en) v18
+- [npm](https://www.npmjs.com/) v9 (Installs automatically with Node and includes `npx`)
+- [Git](https://git-scm.com/)
+- [GitHub account](https://github.com/)
 
 The application was built using Node v18.14.0, npm v9.3.1.
 
@@ -48,10 +48,20 @@ If you are searching for an IDE to use, we recommend [Visual Studio Code](https:
 To get a local copy of the project and to install dependencies, run the following commands:
 
 ```bash
-git clone https://github.com/oktadev/okta-enterprise-ready-workshops.git
+git clone https://github.com/nataliepan/okta-enterprise-ready-workshops.git
 cd okta-enterprise-ready-workshops
-npm ci
+sudo npm ci
 ```
+
+
+Make sure you have your env variables
+
+```
+DATABASE_URL="file:./dev.db"
+VITE_OPENAI_API_KEY=
+VITE_TINY_MCE_KEY=
+```
+
 
 Next, seed the db with two users. Run the script below and you'll see the users and their passwords written to the command line:
 
