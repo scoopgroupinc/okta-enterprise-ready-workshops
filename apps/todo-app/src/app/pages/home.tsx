@@ -21,7 +21,7 @@ export const Home = () => {
   } else {
     return (
       <div className="">
-        <div className="flex justify-center mt-[20%]">
+        <div className="flex justify-center mt-[10%]">
           <FacetsLogoWithText width={100} />
         </div>
         <p className="text-center py-8">
