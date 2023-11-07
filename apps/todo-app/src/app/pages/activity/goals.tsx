@@ -2,39 +2,44 @@ import React, { useRef } from 'react';
 import TinyMCE from '../../components/TinyMCE';
 import { constructHtmlFile } from '../../lib/constructHtmlFile';
 import { downloadHtmlFile } from '../../lib/downloadHtml';
+import { convert } from 'html-to-text';
+import { useOpenAi } from '../../hooks/useOpenAi';
+import { useAuthState } from '../../components/authState';
 
 export const Goals = () => {
+  const { authState } = useAuthState();
+  const { message, setMessage, chat, chats, isTyping } = useOpenAi();
   const title = 'Identify Your Goals';
   const description =
     "Identifying your goals is about creating a vision for what you want and providing yourself with a clear method to realize that vision. It's an ongoing, dynamic process that is central to personal growth and success.";
 
   const initialValue = `<ul class="tox-checklist">
-<li>What goal do you want to achieve?</li>
-</ul>
-<p>If you achieved that...</p>
-<ul class="tox-checklist">
-<li>What do you want to achieve?</li>
-<li>What would it be like?</li>
-<li>What would you be saying to yourself?</li>
-<li>How would this achievement influence other aspects of your life/work?</li>
-<li>How would it feel?</li>
-<li>What would others be saying?</li>
-<li>What would your future look like?</li>
-</ul>
-<ul class="tox-checklist">
-<li>If I could grant you one wish around your goal what would it be?</li>
-<li>On a scale of one to ten, how important is this to you?</li>
-<li>What is the possible outcome if you don&rsquo;t achieve what you want?</li>
-<li>What needs to happen before you decide to do something about this situation?</li>
-<li>When do you want to achieve this?</li>
-<li>How will you measure progress towards your goal?</li>
-<li>What is the first step you need to take?</li>
-</ul>`;
+  <li>What goal do you want to achieve?</li>
+  </ul>
+  <p>If you achieved that...</p>
+  <ul class="tox-checklist">
+  <li>What do you want to achieve?</li>
+  <li>What would it be like?</li>
+  <li>What would you be saying to yourself?</li>
+  <li>How would this achievement influence other aspects of your life/work?</li>
+  <li>How would it feel?</li>
+  <li>What would others be saying?</li>
+  <li>What would your future look like?</li>
+  </ul>
+  <ul class="tox-checklist">
+  <li>If I could grant you one wish around your goal what would it be?</li>
+  <li>On a scale of one to ten, how important is this to you?</li>
+  <li>What is the possible outcome if you don&rsquo;t achieve what you want?</li>
+  <li>What needs to happen before you decide to do something about this situation?</li>
+  <li>When do you want to achieve this?</li>
+  <li>How will you measure progress towards your goal?</li>
+  <li>What is the first step you need to take?</li>
+  </ul>`;
   const editorRef = useRef(null);
   const download = () => {
     if (editorRef.current) {
       const htmlString = editorRef.current.getContent();
-      downloadHtmlFile(constructHtmlFile(htmlString), 'goals', title);
+      downloadHtmlFile(constructHtmlFile(htmlString, title), 'goals');
       // try {
       //   fetch("/api/save_html", {
       //     method: "POST",
@@ -50,6 +55,16 @@ export const Goals = () => {
       // }
     }
   };
+
+  const submit = (e) => {
+    if (editorRef.current) {
+    const htmlString = editorRef.current.getContent();
+    const text = convert(htmlString);
+    const prompt = `Given what I have written please say something to help me grow and self reflect: ${text}`;
+    setMessage(prompt);
+    chat(e, prompt);
+  };
+};
 
   const onInit = (evt, editor) => (editorRef.current = editor);
 
@@ -67,9 +82,50 @@ export const Goals = () => {
         </div>
         <h4 className="text-white">What goal do you want to achieve?</h4>
         <TinyMCE onInit={onInit} initialValue={initialValue} />
+        <button className="btn mt-4 mr-1 btn-secondary" onClick={submit}>
+            Submit
+        </button>
         <button className="btn mt-4 btn-secondary" onClick={download}>
           Download Journal as HTML
         </button>
+        <section>
+          {chats && chats.length
+            ? chats.map((chat, index) => {
+                if (index > 0) {
+                  return (
+                    <div
+                      className={`chat ${
+                        chat.role === 'user' ? 'chat-end' : 'chat-start'
+                      }`}
+                    >
+                      <div>
+                        {authState && chat.role === 'user'
+                          ? authState.name
+                          : 'Coach'}
+                      </div>
+                      <div className="chat-bubble">{chat.content}</div>
+                    </div>
+                  );
+                }
+              })
+            : ''}
+        </section>
+
+        <div className={isTyping ? '' : 'hide'}>
+          <p>
+            <i>{isTyping ? 'Typing' : ''}</i>
+          </p>
+        </div>
+
+        <form action="" onSubmit={(e) => chat(e, message)}>
+          <input
+            type="text"
+            name="message"
+            value={message}
+            placeholder="Type a message here and hit Enter..."
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </form>
       </div>
       <footer className="footer p-10 bg-neutral text-neutral-content mt-[100px]">
         <nav>
