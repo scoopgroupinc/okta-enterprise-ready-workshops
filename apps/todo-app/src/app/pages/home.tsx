@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Signin from './auth/signin';
 import { useAuthState } from '../components/authState';
+import FacetsLogoWithText from '../components/FacetsLogoWithText';
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -20,10 +21,11 @@ export const Home = () => {
   } else {
     return (
       <div className="">
-        <h1 className="text-5xl text-center my-6">Ready to take on the day?</h1>
+        <div className="flex justify-center mt-[20%]">
+          <FacetsLogoWithText width={100} />
+        </div>
         <p className="text-center py-8">
-          You won't miss a task with this fantastic Todo app - sign in and get
-          tasking!
+          Easy bits of wellness at your fingertips.
         </p>
         <Signin />
         {/* {authState.isAuthenticated && (

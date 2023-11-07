@@ -14,14 +14,14 @@ export const Toolbar = () => {
       }
     };
     signOut();
-    navigate('/');
+    navigate(-1);
   };
 
   return (
     <div className="flex justify-between align-middle pb-2 border-b">
       <button
         className="bg-white rounded-[5px] w-[45px] h-[45px] flex justify-center items-center font-bold p-2 m-2 shadow focus:outline-none focus:shadow-outline"
-        onClick={() => navigate('/dashboard')}
+        onClick={() => navigate(-1)}
       >
         <ChevronLeft />
       </button>
