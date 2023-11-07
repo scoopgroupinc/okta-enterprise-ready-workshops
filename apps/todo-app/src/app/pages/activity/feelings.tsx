@@ -320,9 +320,10 @@ function Dashboard() {
         <div className="text-white pl-[20px]">
           {editQuestion !== EDIT_STATES.Q1 && parse(answer1)}
         </div>
-        {editQuestion !== EDIT_STATES.Q1 && (
-          <h4 className="text-white">What would you do differently now?</h4>
-        )}
+        {editQuestion === EDIT_STATES.Q2 ||
+          (editQuestion === EDIT_STATES.DONE && answer2 && (
+            <h4 className="text-white">What would you do differently now?</h4>
+          ))}
         {editQuestion === EDIT_STATES.DONE && answer2 && (
           <div className="text-white pl-[20px]">{parse(answer2)}</div>
         )}
@@ -373,19 +374,23 @@ function Dashboard() {
 
         <div className={isTyping ? '' : 'hide'}>
           <p>
-            <i>{isTyping ? 'Typing' : ''}</i>
+            {isTyping && (
+              <span className="loading loading-dots loading-md"></span>
+            )}
           </p>
         </div>
-
-        <form action="" onSubmit={(e) => chat(e, message)}>
-          <input
-            type="text"
-            name="message"
-            value={message}
-            placeholder="Type a message here and hit Enter..."
-            onChange={(e) => setMessage(e.target.value)}
-          />
-        </form>
+        {editQuestion === EDIT_STATES.DONE && (
+          <form action="" onSubmit={(e) => chat(e, message)}>
+            <input
+              type="text"
+              name="message"
+              className="input input-bordered w-full max-w-xs"
+              value={message}
+              placeholder="Type a message here and hit Enter..."
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </form>
+        )}
       </div>
       <footer className="footer p-10 bg-neutral text-neutral-content mt-[100px]">
         <nav>

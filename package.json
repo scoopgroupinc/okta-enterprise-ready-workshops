@@ -13,6 +13,7 @@
     "init-db": "prisma generate && prisma db push && npx ts-node prisma/seed_script.ts",
     "serve-api": "nx run api:serve",
     "oidc-migrate": "npx ts-node prisma/oidc_script.ts",
+    "migrate": "prisma migrate dev",
     "prisma-migrate": "npx prisma migrate reset",
     "prisma-start": "npx prisma studio",
     "prisma-update": "prisma generate && prisma db push"

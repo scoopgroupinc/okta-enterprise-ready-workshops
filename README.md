@@ -53,7 +53,6 @@ cd okta-enterprise-ready-workshops
 sudo npm ci
 ```
 
-
 Make sure you have your env variables
 
 ```
@@ -62,10 +61,10 @@ VITE_OPENAI_API_KEY=
 VITE_TINY_MCE_KEY=
 ```
 
-
 Next, seed the db with two users. Run the script below and you'll see the users and their passwords written to the command line:
 
 ```bash
+npm run npx prisma migrate reset
 npm run init-db
 ```
 
