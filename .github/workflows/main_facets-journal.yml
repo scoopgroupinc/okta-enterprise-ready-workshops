@@ -10,14 +10,14 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_CONTAINER_REGISTRY_LOGIN_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER_DEV }}
-  AZURE_CONTAINER_REGISTRY_USERNAME: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME_DEV }}
+  AZURE_CONTAINER_REGISTRY_LOGIN_SERVER: ${{ vars.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER_DEV }}
+  AZURE_CONTAINER_REGISTRY_USERNAME: ${{ vars.AZURE_CONTAINER_REGISTRY_USERNAME_DEV }}
   AZURE_CONTAINER_REGISTRY_PASSWORD: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD_DEV }}
   AZURE_GITHUB_SERVICE_PRINCIPLE: ${{ secrets.AZURE_GITHUB_SERVICE_PRINCIPLE_DEV }}
 
   NODE_VERSION: '18'
   REGISTRY_FOLDER: journal
-  PORT: 8080
+  PORT: 3000
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
   VITE_TINY_MCE_KEY: ${{ secrets.VITE_TINY_MCE_KEY }}
@@ -51,19 +51,19 @@ jobs:
 
       - name: Build and push Docker image (Development)
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER_DEV }}/${{ env.REGISTRY_FOLDER }}:${{ github.sha }} -f Dockerfile . \
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:${{ github.sha }} -f Dockerfile . \
           --build-arg DATABASE_URL="${{ env.DATABASE_URL }}" \
           --build-arg VITE_OPENAI_API_KEY="${{ env.VITE_OPENAI_API_KEY }}" \
           --build-arg VITE_TINY_MCE_KEY="${{ env.VITE_TINY_MCE_KEY }}" \
-          --build-arg DB_PORT="${{ env.DB_PORT }}" \
-          docker push ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER_DEV }}/${{ env.REGISTRY_FOLDER }}:${{ github.sha }}
+          --build-arg PORT="${{ env.PORT }}"
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:${{ github.sha }}
 
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER_DEV }}/${{ env.REGISTRY_FOLDER }}:latest -f Dockerfile . \
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:latest -f Dockerfile . \
           --build-arg DATABASE_URL="${{ env.DATABASE_URL }}" \
           --build-arg VITE_OPENAI_API_KEY="${{ env.VITE_OPENAI_API_KEY }}" \
           --build-arg VITE_TINY_MCE_KEY="${{ env.VITE_TINY_MCE_KEY }}" \
-          --build-arg DB_PORT="${{ env.DB_PORT }}" \
-          docker push ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER_DEV }}/${{ env.REGISTRY_FOLDER }}:latest
+          --build-arg PORT="${{ env.PORT }}"
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.REGISTRY_FOLDER }}:latest
 
   deploy:
     runs-on: ubuntu-latest

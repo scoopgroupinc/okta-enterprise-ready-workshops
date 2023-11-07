@@ -28,7 +28,7 @@ RUN echo "REGISTRY_FOLDER: $REGISTRY_FOLDER" && \
     echo "DATABASE_URL: $DATABASE_URL" && \
     echo "VITE_OPENAI_API_KEY: $VITE_OPENAI_API_KEY" && \
     echo "VITE_TINY_MCE_KEY: $VITE_TINY_MCE_KEY" && \
-    echo "DB_PORT: $DB_PORT"
+    echo "PORT: $PORT"
 
 # Set environment variables
 ENV REGISTRY_FOLDER=$REGISTRY_FOLDER
