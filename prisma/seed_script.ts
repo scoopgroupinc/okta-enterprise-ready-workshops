@@ -43,6 +43,17 @@ async function main() {
     },
   });
   console.log('Created user Trinity', trinityUser);
+
+  const maxUser = await prisma.user.create({
+    data: {
+      name: 'Max Katz',
+      email: 'max@okta.com',
+      password: 'okta',
+    },
+  });
+  console.log('Created user Max', maxUser);
+
+  
 }
 
 main()
