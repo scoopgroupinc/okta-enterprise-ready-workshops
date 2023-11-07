@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import Signin from './auth/signin';
 import { useAuthState } from '../components/authState';
 import FacetsLogoWithText from '../components/FacetsLogoWithText';
+import ROUTES from '../../utils/routes';
 
 export const Home = () => {
   const navigate = useNavigate();
   const { authState } = useAuthState();
 
   useEffect(() => {
+    console.log('authState.isAuthenticated', authState.isAuthenticated);
     if (authState.isAuthenticated) {
-      navigate('/dashboard');
+      console.log('navigate to dashboard');
+      navigate(ROUTES.DASHBOARD);
     }
   }, [authState.isAuthenticated, navigate]);
 

@@ -35,8 +35,6 @@ export const Signin = () => {
       }
       setUsername('');
       setPassword('');
-
-      navigate(ROUTES.DASHBOARD);
     };
     signIn();
   };

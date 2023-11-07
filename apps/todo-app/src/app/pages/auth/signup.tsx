@@ -16,7 +16,7 @@ function SignUp() {
 
   useEffect(() => {
     if (authState.isAuthenticated) {
-      navigate('/dashboard');
+      navigate(ROUTES.DASHBOARD);
     }
   }, [authState.isAuthenticated, navigate]);
 

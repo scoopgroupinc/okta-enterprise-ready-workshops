@@ -62,11 +62,11 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
         setAuthState({ name, isAuthenticated: true });
         localStorage.setItem('isAuthenticated', 'true');
       } else {
-        setAuthState(defaultAuthState);
+        setAuthState({ name: '', isAuthenticated: false });
         localStorage.setItem('isAuthenticated', 'false');
       }
     } catch (error: unknown) {
-      setAuthState(defaultAuthState);
+      setAuthState({ name: '', isAuthenticated: false });
       console.error(error);
     }
   }, [setAuthState]);
@@ -93,24 +93,61 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+  // const onAuthenticateFn = async (email: string, password: string) => {
+  //   console.log('email', email, password);
+  //   const url = `/api/signin`;
+  //   try {
+  //     const res = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     const { name } = await res.json();
+  //     console.log('name', name);
+  //     setAuthState({ name, isAuthenticated: true });
+  //     localStorage.setItem('isAuthenticated', 'true');
+  //   } catch (error: unknown) {
+  //     console.error(error);
+  //   }
+  // };
+
   const onAuthenticateFn = async (email: string, password: string) => {
-    console.log('email', email, password);
+    console.log('Attempting to authenticate with email:', email);
     const url = `/api/signin`;
     try {
-      const res = await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-
-      const { name } = await res.json();
-      console.log('name', name);
-      setAuthState({ name, isAuthenticated: true });
-      localStorage.setItem('isAuthenticated', 'true');
-    } catch (error: unknown) {
-      console.error(error);
+      console.log('response', response);
+      if (response.ok) {
+        const { name } = await response.json();
+        console.log('Authenticated as:', name);
+        setAuthState({ name, isAuthenticated: true });
+        localStorage.setItem('isAuthenticated', 'true');
+      } else if (response.status === 401) {
+        console.error('Authentication failed: Invalid email or password.');
+        setAuthState({ name: '', isAuthenticated: false });
+        localStorage.setItem('isAuthenticated', 'false');
+      } else {
+        // If the server responded with any other error
+        console.error('An error occurred during authentication.');
+        setAuthState({ name: '', isAuthenticated: false });
+        localStorage.setItem('isAuthenticated', 'false');
+      }
+    } catch (error) {
+      console.error(
+        'An error occurred while sending the authentication request:',
+        error
+      );
+      setAuthState({ name: '', isAuthenticated: false });
+      localStorage.setItem('isAuthenticated', 'false');
     }
   };
 
