@@ -1,4 +1,5 @@
 import express from 'express';
+import bcrypt from 'bcrypt';
 import { PrismaClient, Todo, User } from '@prisma/client';
 import passportLocal from 'passport-local';
 import passportOIDC from 'passport-openidconnect';
@@ -110,6 +111,96 @@ passport.deserializeUser(async (id: number, done) => {
   });
 
   done(null, user);
+});
+
+app.post('/api/register', async (req, res) => {
+  console.log('req.body: ', req.body);
+  const { email, password, name } = req.body;
+
+  // Input validation (basic example)
+  if (!email || !password || !name) {
+    return res
+      .status(400)
+      .json({ message: 'Name, email, and password are required.' });
+  }
+
+  // More comprehensive validation should be done here
+
+  try {
+    // Check if user already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: `User with email ${email} already exists.` });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    // Send Response
+    res
+      .status(201)
+      .json({ message: 'User created successfully', userId: user.id });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Error creating user' });
+  }
+});
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Input validation
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: 'Email and password are required.' });
+  }
+
+  try {
+    // Check if user exists
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    // User matched, proceed with login process
+    // For example, generating a JWT token or starting a session
+    // ...
+
+    res.status(200).json({ message: 'User logged in successfully' });
+    // Include the token or user data as needed
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ message: 'Error logging in' });
+  }
 });
 
 app.post('/api/signin', passport.authenticate('local'), async (req, res) => {

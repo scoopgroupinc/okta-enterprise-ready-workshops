@@ -6,6 +6,7 @@ import ROUTES from 'apps/todo-app/src/utils/routes';
 export const Signin = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   const { onAuthenticateFn, onUsernameEnteredFn } = useAuthState();
   const navigate = useNavigate();
@@ -23,7 +24,8 @@ export const Signin = () => {
           );
           return;
         } else {
-          document.getElementById('password-field')?.removeAttribute('hidden');
+          setHidePassword(false);
+          // enable sign in with auth0
           return;
         }
       }
@@ -59,7 +61,7 @@ export const Signin = () => {
         />
       </div>
 
-      <div id="password-field" className="mb-6 hidden">
+      <div id="password-field" className="mb-6" hidden={hidePassword}>
         <label
           htmlFor="password"
           className="block text-sm font-medium leading-6 text-gray-900"
@@ -78,12 +80,20 @@ export const Signin = () => {
         />
       </div>
       <button
-        className="w-full py-2 px-3 bg-slate-300 rounded-md"
+        className="btn btn-primary w-full"
         onClick={onAuthenticate}
         disabled={!username}
       >
         Sign in
       </button>
+      <div className="py-2">
+        <button
+          onClick={() => navigate(ROUTES.SIGN_UP)}
+          className="btn btn-link w-full"
+        >
+          Sign Up
+        </button>
+      </div>
     </div>
   );
 };

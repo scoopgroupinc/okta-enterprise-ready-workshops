@@ -12,29 +12,31 @@ function SignUp() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage('');
-    console.log('submit');
+    console.log('submit', { email, password, name: username });
     try {
-      fetch('/api/auth/register', {
+      const res = await fetch('/api/register', {
         method: 'POST',
+        credentials: 'same-origin',
+        mode: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, username }),
-      })
-        .then((res) => res.json())
-        .then(({ data, message, status }) => {
-          console.log(data, message, status);
-          if (message && message[0]?.error) {
-            setErrorMessage(message[0]?.error);
-          } else {
-            navigate(ROUTES.HOME);
-          }
-          setLoading(false);
-        });
+        body: JSON.stringify({ email, password, name: username }),
+      });
+
+      const user = await res.json();
+
+      console.log('user', user);
+      // if (message && message[0]?.error) {
+      //   setErrorMessage(message[0]?.error);
+      // } else {
+      //   navigate(ROUTES.HOME);
+      // }
+      setLoading(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -79,7 +81,7 @@ function SignUp() {
         <h2>Sign Up</h2>
         <div>
           <label htmlFor="username" className="label">
-            <span className="label-text">Username</span>
+            <span className="label-text">Full Name</span>
           </label>
           <input
             onChange={handleUsernameChange}
