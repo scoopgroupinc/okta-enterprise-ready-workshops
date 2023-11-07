@@ -11,6 +11,11 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
+interface SignUp {
+  name: string;
+  email: string;
+  password: string;
+}
 const defaultAuthState: AuthState = {
   name: undefined,
   isAuthenticated: false,
@@ -22,6 +27,7 @@ export type AuthContextType = {
   onAuthenticateFn: (username: string, password: string) => Promise<void>;
   onUsernameEnteredFn: (username: string) => Promise<number | null>;
   onRevokeAuthFn: () => Promise<void>;
+  onSignUpFn: ({ name, email, password }: SignUp) => Promise<void>;
 };
 
 const defaultAuthContext: AuthContextType = {
@@ -30,6 +36,7 @@ const defaultAuthContext: AuthContextType = {
   onAuthenticateFn: async () => {},
   onUsernameEnteredFn: async () => null,
   onRevokeAuthFn: async () => {},
+  onSignUpFn: async () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuthContext);
@@ -63,6 +70,28 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
       console.error(error);
     }
   }, [setAuthState]);
+
+  const onSignUpFn = async ({ name, email, password }: SignUp) => {
+    const url = `/api/register`;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        mode: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const { user } = await res.json();
+
+      setAuthState({ name: user.name, isAuthenticated: true });
+      localStorage.setItem('isAuthenticated', 'true');
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  };
 
   const onAuthenticateFn = async (username: string, password: string) => {
     const url = `/api/signin`;
@@ -125,6 +154,7 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
     <AuthContext.Provider
       value={{
         authState,
+        onSignUpFn,
         onAuthenticateFn,
         onUsernameEnteredFn,
         onRevokeAuthFn,

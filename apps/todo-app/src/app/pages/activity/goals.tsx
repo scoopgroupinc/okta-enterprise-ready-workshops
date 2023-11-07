@@ -58,13 +58,13 @@ export const Goals = () => {
 
   const submit = (e) => {
     if (editorRef.current) {
-    const htmlString = editorRef.current.getContent();
-    const text = convert(htmlString);
-    const prompt = `Given what I have written please say something to help me grow and self reflect: ${text}`;
-    setMessage(prompt);
-    chat(e, prompt);
+      const htmlString = editorRef.current.getContent();
+      const text = convert(htmlString);
+      const prompt = `Given what I have written please say something to help me grow and self reflect: ${text}`;
+      setMessage(prompt);
+      chat(e, prompt);
+    }
   };
-};
 
   const onInit = (evt, editor) => (editorRef.current = editor);
 
@@ -83,7 +83,7 @@ export const Goals = () => {
         <h4 className="text-white">What goal do you want to achieve?</h4>
         <TinyMCE onInit={onInit} initialValue={initialValue} />
         <button className="btn mt-4 mr-1 btn-secondary" onClick={submit}>
-            Submit
+          Submit
         </button>
         <button className="btn mt-4 btn-secondary" onClick={download}>
           Download Journal as HTML
@@ -113,16 +113,18 @@ export const Goals = () => {
 
         <div className={isTyping ? '' : 'hide'}>
           <p>
-            <i>{isTyping ? 'Typing' : ''}</i>
+            {isTyping && (
+              <span className="loading loading-dots loading-md"></span>
+            )}
           </p>
         </div>
-
         <form action="" onSubmit={(e) => chat(e, message)}>
           <input
             type="text"
             name="message"
             value={message}
-            placeholder="Type a message here and hit Enter..."
+            className="input input-bordered w-full max-w-xs"
+            placeholder="Chat with a coach..."
             onChange={(e) => setMessage(e.target.value)}
           />
         </form>

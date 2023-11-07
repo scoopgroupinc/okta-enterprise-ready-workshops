@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import ROUTES from 'apps/todo-app/src/utils/routes';
+import { useAuthState } from '../../components/authState';
 
 function SignUp() {
+  const { authState, onSignUpFn } = useAuthState();
   const [email, setEmail] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -12,30 +14,19 @@ function SignUp() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (authState.isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [authState.isAuthenticated, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage('');
     console.log('submit', { email, password, name: username });
     try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        credentials: 'same-origin',
-        mode: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, name: username }),
-      });
-
-      const user = await res.json();
-
-      console.log('user', user);
-      // if (message && message[0]?.error) {
-      //   setErrorMessage(message[0]?.error);
-      // } else {
-      //   navigate(ROUTES.HOME);
-      // }
+      onSignUpFn({ name: username, email, password });
       setLoading(false);
     } catch (error) {
       console.log(error);

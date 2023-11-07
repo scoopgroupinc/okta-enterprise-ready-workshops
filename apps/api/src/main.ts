@@ -85,19 +85,54 @@ app.use(
 );
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    const user = await prisma.user.findFirst({
-      where: {
-        AND: {
-          email: username,
-          password,
+  new LocalStrategy(async (email, password, done) => {
+    try {
+      // Find the user by email
+      const user = await prisma.user.findFirst({
+        where: {
+          email: email,
         },
-      },
-    });
+      });
 
-    return done(null, user);
+      // If no user is found, or the password doesn't match, return false
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return done(null, false, { message: 'Incorrect email or password.' });
+      }
+
+      // If the user is found and the password matches, return the user
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
   })
 );
+
+app.post('/api/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(401).json({ message: info.message });
+    }
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        return next(loginErr);
+      }
+      // User matched, proceed with login process
+      // For example, generating a JWT token or starting a session
+      // ...
+
+      // Exclude password from the user object before sending the response
+      const { password, ...userWithoutPassword } = user;
+      res.status(200).json({
+        message: 'User logged in successfully',
+        user: userWithoutPassword,
+      });
+      // Include the token or user data as needed
+    });
+  })(req, res, next);
+});
 
 passport.serializeUser(async (user: IUser, done) => {
   done(null, user.id);
@@ -114,23 +149,18 @@ passport.deserializeUser(async (id: number, done) => {
 });
 
 app.post('/api/register', async (req, res) => {
-  console.log('req.body: ', req.body);
   const { email, password, name } = req.body;
-
-  // Input validation (basic example)
   if (!email || !password || !name) {
     return res
       .status(400)
       .json({ message: 'Name, email, and password are required.' });
   }
 
-  // More comprehensive validation should be done here
-
   try {
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        email,
+        email: email,
       },
     });
 
@@ -146,60 +176,29 @@ app.post('/api/register', async (req, res) => {
     // Create a new user
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: name,
+        email: email,
         password: hashedPassword,
       },
     });
 
-    // Send Response
-    res
-      .status(201)
-      .json({ message: 'User created successfully', userId: user.id });
+    // Automatically log the user in after registration
+    req.login(user, (err) => {
+      if (err) {
+        console.error('Error logging in new user:', err);
+        return res.status(500).json({ message: 'Error logging in new user' });
+      }
+
+      // Exclude password from the user object before sending the response
+      const { password, ...userWithoutPassword } = user;
+      return res.status(201).json({
+        message: 'User created and logged in successfully',
+        user: userWithoutPassword,
+      });
+    });
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ message: 'Error creating user' });
-  }
-});
-
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  // Input validation
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: 'Email and password are required.' });
-  }
-
-  try {
-    // Check if user exists
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
-    }
-
-    // Compare the provided password with the stored hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
-    }
-
-    // User matched, proceed with login process
-    // For example, generating a JWT token or starting a session
-    // ...
-
-    res.status(200).json({ message: 'User logged in successfully' });
-    // Include the token or user data as needed
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ message: 'Error logging in' });
   }
 });
 
