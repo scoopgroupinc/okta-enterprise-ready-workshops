@@ -334,7 +334,7 @@ function Dashboard() {
             Next
           </button>
         )}
-        {editQuestion !== EDIT_STATES.Q1 && (
+        {editQuestion !== EDIT_STATES.Q2 && (
           <button className="btn mt-4 mr-1 btn-secondary" onClick={back}>
             Back
           </button>
@@ -355,7 +355,7 @@ function Dashboard() {
                   return (
                     <div
                       className={`chat ${
-                        chat.role === 'user' ? 'chat-start' : 'chat-end'
+                        chat.role === 'user' ? 'chat-end' : 'chat-start'
                       }`}
                     >
                       <div>
