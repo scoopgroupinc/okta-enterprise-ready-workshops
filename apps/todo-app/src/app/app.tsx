@@ -29,7 +29,11 @@ export const App = () => {
   }, [userIsAuthenticatedFn]);
 
   useEffect(() => {
-    if (!authState.isAuthenticated && location.pathname !== '/') {
+    if (
+      !authState.isAuthenticated &&
+      location.pathname !== '/' &&
+      location.pathname !== '/signup'
+    ) {
       setModalOpen(true);
     } else {
       setModalOpen(false);
@@ -38,7 +42,8 @@ export const App = () => {
 
   return (
     <div className="">
-      <Toolbar />
+      {location.pathname !== '/' && <Toolbar />}
+
       <Modal open={modalOpen} />
       <main>
         <Routes>
