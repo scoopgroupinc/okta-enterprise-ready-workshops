@@ -13,6 +13,7 @@ export const Signin = () => {
 
   const onAuthenticate = async () => {
     const signIn = async () => {
+      console.log('signin ', username, password);
       // When user enters just the email but no password. check if the user is part of an org
       if (username && !password) {
         console.log('username entered but no password', username);

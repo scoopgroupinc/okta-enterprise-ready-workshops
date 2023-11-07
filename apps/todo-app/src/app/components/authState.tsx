@@ -56,7 +56,7 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
         credentials: 'same-origin',
         mode: 'same-origin',
       });
-      console.log('res', res);
+      console.log('userIsAuthenticatedFn', res);
       if (res.status === 200) {
         const { name } = await res.json();
         setAuthState({ name, isAuthenticated: true });
@@ -93,7 +93,8 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
-  const onAuthenticateFn = async (username: string, password: string) => {
+  const onAuthenticateFn = async (email: string, password: string) => {
+    console.log('email', email, password);
     const url = `/api/signin`;
     try {
       const res = await fetch(url, {
@@ -101,11 +102,11 @@ const AuthContextProvider: React.FC<Props> = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const { name } = await res.json();
-
+      console.log('name', name);
       setAuthState({ name, isAuthenticated: true });
       localStorage.setItem('isAuthenticated', 'true');
     } catch (error: unknown) {

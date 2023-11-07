@@ -202,10 +202,24 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-app.post('/api/signin', passport.authenticate('local'), async (req, res) => {
-  res.json({
-    name: req.user['name'],
-  });
+app.post('/api/signin', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err); // will generate a 500 error
+    }
+    // Generate a JSON response reflecting authentication status
+    if (!user) {
+      return res.status(401).send({ success: false, message: info.message });
+    }
+    req.login(user, (loginErr) => {
+      if (loginErr) {
+        return next(loginErr);
+      }
+      // Exclude password from the user object before sending the response
+      const { password, ...userWithoutPassword } = user;
+      return res.json({ success: true, name: userWithoutPassword.name });
+    });
+  })(req, res, next);
 });
 
 app.post('/api/signout', async (req, res, next) => {
