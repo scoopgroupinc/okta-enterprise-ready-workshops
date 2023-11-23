@@ -91,5 +91,8 @@
     "react-dom": "18.2.0",
     "react-router-dom": "6.8.1",
     "tslib": "^2.3.0"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/scoopgroupinc/okta-enterprise-ready-workshops",
+  "author": "lloydchang <lloydchang@gmail.com>"
 }
